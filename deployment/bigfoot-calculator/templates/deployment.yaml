@@ -1,0 +1,29 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: bigfoot-calculator-web-deployment
+  labels:
+    app: afternoon
+    tier: web
+    environment: {{ .Values.web_environment }}
+spec:
+  template:
+    metadata:
+      labels:
+        app: bigfoot-calculator
+        tier: web
+        environment: {{ .Values.web_environment }}
+    spec:
+      containers:
+        - name: bigfoot-calculator-web
+          image: gcr.io/philo-230001/bigfoot.calculator/web:{{ .Values.web.tag }}
+          env:
+          - name: "ENVIRONMENT"
+            value: {{ .Values.web_environment }}
+          resources:
+            limits:
+              cpu: "0.1"
+            requests:
+              cpu: "0.0"
+          ports:
+          - containerPort: 80

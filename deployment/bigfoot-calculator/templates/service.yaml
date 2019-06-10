@@ -1,0 +1,17 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: bigfoot-calculator-web-svc
+  labels:
+    app: bigfoot-calculator
+    tier: web
+    environment: {{ .Values.web_environment }}
+spec:
+  selector:
+    app: bigfoot-calculator
+    tier: web
+    environment: {{ .Values.web_environment }}
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80

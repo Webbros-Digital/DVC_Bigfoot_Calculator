@@ -1,0 +1,30 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: bigfoot-calculator-web-ingress
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    # need to do this so the styles come through
+    traefik.frontend.passHostHeader: "true"
+    traefik.frontend.priority: "1"
+    # traefik.ingress.kubernetes.io/redirect-regex: ^https://www.{{ .Values.web.url }}/(.*)
+    # traefik.ingress.kubernetes.io/redirect-replacement: https://{{ .Values.web.url }}/$1
+    # traefik.ingress.kubernetes.io/redirect-permanent: "true"
+  labels:
+    app: bigfoot-calculator
+    tier: web
+    environment: {{ .Values.web_environment }}
+spec:
+  rules:
+  - host: {{ .Values.web.url }}
+    http:
+      paths:
+      - backend:
+          serviceName: bigfoot-calculator-web-svc
+          servicePort: 80
+  # - host: www.{{ .Values.web.url }}
+    # http:
+      # paths:
+      # - backend:
+          # serviceName: bigfoot-calculator-web-svc 
+          # servicePort: 80
