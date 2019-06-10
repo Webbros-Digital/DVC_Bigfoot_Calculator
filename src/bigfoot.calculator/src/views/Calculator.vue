@@ -9,7 +9,7 @@
       <div class="row">
         <div class='col-12 col-md-6'>
           <h1>Inputs</h1>
-          <b-form @submit.prevent="">
+          <b-form @submit.prevent="" @reset="resetForm" :key='formKey'>
             <b-form-group
               label-cols-sm="6"
               label-cols-lg="6"
@@ -49,6 +49,7 @@
               <b-form-input id="roadConditions" type='range' min='1' max='5'
                 v-model.number="form.roadConditions">
               </b-form-input>
+              <div><span class='float-right text-muted'>{{ form.roadConditions }}</span></div>
             </b-form-group>
 
             <b-form-group
@@ -64,7 +65,7 @@
                   max='2.00'
                   step='0.01'
                   v-model.number="form.fuelConsumption"
-                  :placeholder="fuelConsumption">
+                  :placeholder="form.getFuelConsumption + ''">
                 </b-form-input>
               </b-input-group>
             </b-form-group>
@@ -76,12 +77,14 @@
               <b-input-group append='%'>
                 <b-form-input
                   id="fuelConsumptionSavingsPct"
-                  type='number'
-                  min='0'
-                  max='100'
+                  type='range'
+                  min='1'
+                  max='5'
+                  step='0.5'
                   v-model.number="form.fuelConsumptionSavingsPct">
                 </b-form-input>
               </b-input-group>
+              <div><span class='float-right text-muted'>{{ form.fuelConsumptionSavingsPct }}</span></div>
             </b-form-group>
 
             <b-form-group
@@ -92,10 +95,10 @@
               <b-input-group append='km'>
                 <b-form-input
                   id="tyreLife"
-                  type='number'
                   min='1000'
                   max='100000'
                   step='1000'
+                  disabled
                   v-model.number="form.tyreLife">
                 </b-form-input>
               </b-input-group>
@@ -199,7 +202,7 @@
                   id="fuelCost"
                   type='number'
                   min='0.50'
-                  max='2.00'
+                  max='6.00'
                   step='0.01'
                   v-model.number="form.fuelCost">
                 </b-form-input>
@@ -318,21 +321,22 @@
                 </b-form-input>
               </b-input-group>
             </b-form-group>
+            <b-button type='reset'>Reset</b-button>
           </b-form>
         </div>
         <div class='col-12 col-md-6'>
           <h2>Calculations</h2>
           <table class='table'>
             <tbody>
-              <tr><td>Blowout Savings</td><td>${{ blowoutSavings.toFixed(2) }}</td></tr>
-              <tr><td>Tyre Wear Savings</td><td>${{ wearSavings.toFixed(2) }}</td></tr>
-              <tr><td>Fuel Savings</td><td>${{ fuelSavings.toFixed(2) }}</td></tr>
-              <tr><td>Service Call Savings</td><td>${{ serviceSavings.toFixed(2) }}</td></tr>
-              <tr><td>Extended Season Additional Returns</td><td>${{ additionalReturns.toFixed(2) }}</td></tr>
-              <tr><td>Tyre Maintenance Savings</td><td>${{ maintainanceSavings.toFixed(2) }}</td></tr>
-              <tr><td>HPMV Tyre Infringement Savings</td><td>${{ infingementSavings.toFixed(2) }}</td></tr>
-              <tr><td>CTI Annual Maintenance Costs</td><td>${{ maintainanceCosts.toFixed(2) }}</td></tr>
-              <tr><td>Total Savings</td><td>${{ totalSavings.toFixed(2) }}</td></tr>
+              <tr><td>Blowout Savings</td><td>${{ form.blowoutSavings.toFixed(2) }}</td></tr>
+              <tr><td>Tyre Wear Savings</td><td>${{ form.wearSavings.toFixed(2) }}</td></tr>
+              <tr><td>Fuel Savings</td><td>${{ form.fuelSavings.toFixed(2) }}</td></tr>
+              <tr><td>Service Call Savings</td><td>${{ form.serviceSavings.toFixed(2) }}</td></tr>
+              <tr><td>Extended Season Additional Returns</td><td>${{ form.additionalReturns.toFixed(2) }}</td></tr>
+              <tr><td>Tyre Maintenance Savings</td><td>${{ form.maintainanceSavings.toFixed(2) }}</td></tr>
+              <tr><td>HPMV Tyre Infringement Savings</td><td>${{ form.infingementSavings.toFixed(2) }}</td></tr>
+              <tr><td>CTI Annual Maintenance Costs</td><td>${{ form.maintainanceCosts.toFixed(2) }}</td></tr>
+              <tr><td>Total Savings</td><td>${{ form.totalSavings.toFixed(2) }}</td></tr>
             </tbody>
           </table>
 
@@ -341,7 +345,7 @@
             label-cols-lg="6"
             label="CTI Cost Fitted**"
             label-for="ctiCostFitted"
-            :description="this.form.ctiCostFitted && this.form.ctiCostFitted === 0 ? null : '**Indicative cost only used. Contact Bigfoot Equipment Ltd for a Quote. '">
+            :description="form.ctiCostFitted && form.ctiCostFitted === 0 ? null : '**Indicative cost only used. Contact Bigfoot Equipment Ltd for a Quote. '">
             <b-input-group prepend='$'>
               <b-form-input
                 id="ctiCostFitted"
@@ -350,7 +354,7 @@
                 max='10000'
                 step='0.01'
                 v-model.number="form.ctiCostFitted"
-                :placeholder="ctiCostFitted + ''">
+                :placeholder="form.getCtiCostFitted + ''">
               </b-form-input>
             </b-input-group>
           </b-form-group>
@@ -358,8 +362,8 @@
           <table class='table'>
             <tbody>
               <tr>
-                <td><b>Payback Period (years): {{ paybackPeriod.toFixed(2) }}</b></td>
-                <td>{{ paybackScore }}</td>
+                <td><b>Payback Period (years): {{ form.paybackPeriod.toFixed(2) }}</b></td>
+                <td>{{ form.paybackScore }}</td>
               </tr>
               <tr>
                 <td>Other Benefits</td>
@@ -401,55 +405,14 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { asEnumerable } from 'linq-es2015';
+import CalculatorInputs from '@/models/calculator-inputs';
 
 @Component({
 })
 export default class Calculator extends Vue {
-  public form: {
-    distance: number,
-    ctiReqPct: number,
-    roadConditions: number,
-    fuelConsumption?: number,
-    fuelConsumptionSavingsPct: number,
-    tyreLife: number,
-    tyreWearPct: number,
-    blowouts: number,
-    serviceCalls: number,
-    infringements: number,
-    axels: number,
-    tyres: number,
-    fuelCost: number,
-    costPerTyre: number,
-    serviceCallout: number,
-    maintainanceChecks: number,
-    ctiEquipmentMaintainancePct: number,
-    infringementCost: number,
-    extendedOperatingSeason: number,
-    returnPerDay: number,
-    ctiCostFitted?: number
-  } = {
-    distance: 150000,
-    ctiReqPct: 15,
-    roadConditions: 3,
-    fuelConsumption: undefined,
-    fuelConsumptionSavingsPct: 3,
-    tyreLife: 57000,
-    tyreWearPct: 20,
-    blowouts: .5,
-    serviceCalls: 1,
-    infringements: 0.1,
-    axels: 2,
-    tyres: 8,
-    fuelCost: 1.47,
-    costPerTyre: 600,
-    serviceCallout: 210,
-    maintainanceChecks: 60,
-    ctiEquipmentMaintainancePct: 3,
-    infringementCost: 2000,
-    extendedOperatingSeason: 3,
-    returnPerDay: 120,
-    ctiCostFitted: undefined
-  };
+  public formKey: number = Date.now();
+
+  public form: CalculatorInputs = new CalculatorInputs();
 
   public otherBenefits: Array<{ id: number, description: string, points: number, checked: boolean }> = [
     {
@@ -495,136 +458,17 @@ export default class Calculator extends Vue {
       checked: true
     }
   ];
-  public paybackPeriods: Array<{ period: number, points: number }> = [
-    { period: -10.0, points: 0   },
-    { period: 0	 , points: 0     },
-    { period: 1	 , points: 60    },
-    { period: 1.5	 , points: 55},
-    { period: 2	 , points: 50    },
-    { period: 2.5	 , points: 45},
-    { period: 3	 , points: 42    },
-    { period: 3.5	 , points: 40},
-    { period: 4	 , points: 35    },
-    { period: 5	 , points: 32    },
-    { period: 6	 , points: 30    },
-    { period: 7	 , points: 28    },
-    { period: 8	 , points: 25    },
-    { period: 9	 , points: 22    },
-    { period: 10	 , points: 20},
-    { period: 11	 , points: 10}
-  ];
-  public ctiFitted: Array<{ axels: number, cost: number }> = [
-    { axels: 1, cost: 7000 },
-    { axels: 2, cost: 7500 },
-    { axels: 3, cost: 10000},
-    { axels: 4, cost: 11000},
-    { axels: 5, cost: 12000},
-    { axels: 6, cost: 13000}
-  ];
-  public fuelAdjustment: Array<{ axels: number, cost: number }> = [
-    { axels: 1, cost: 2.70 },
-    { axels: 2, cost: 2.35 },
-    { axels: 3, cost: 1.90 },
-    { axels: 4, cost: 1.40 },
-    { axels: 5, cost: 0.85 }
-  ];
-  public tyreLife: Array<{ axels: number, cost: number }> = [
-    { axels: 1, cost: 70000 },
-    { axels: 2, cost: 64000 },
-    { axels: 3, cost: 57000 },
-    { axels: 4, cost: 49000 },
-    { axels: 5, cost: 40000 }
-  ];
 
-  public get fuelConsumption() {
-    if (this.form.fuelConsumption || this.form.fuelConsumption === 0) {
-      return this.form.fuelConsumption;
-    }
-
-    return 1.9;
-  }
-
-  public get blowoutSavings() {
-    return (this.form.costPerTyre + this.form.serviceCallout) * this.form.blowouts;
-  }
-
-  public get wearSavings() {
-    return this.form.tyres * (this.form.distance / this.form.tyreLife)
-      * this.form.costPerTyre * ((this.form.tyreWearPct / 100) * (this.form.ctiReqPct / 100));
-  }
-
-  public get fuelSavings() {
-    return ((this.form.distance * (this.form.ctiReqPct / 100)) / this.fuelConsumption)
-      * this.form.fuelCost * (this.form.fuelConsumptionSavingsPct / 100);
-  }
-
-  public get serviceSavings() {
-    return (this.form.serviceCalls * this.form.serviceCallout);
-  }
-
-  public get additionalReturns() {
-    return (this.form.extendedOperatingSeason * this.form.returnPerDay);
-  }
-
-  public get maintainanceSavings() {
-    return (this.form.maintainanceChecks * 12);
-  }
-
-  public get infingementSavings() {
-    return (this.form.infringementCost * this.form.infringements);
-  }
-
-  public get ctiCostFitted() {
-    if (this.form.ctiCostFitted || this.form.ctiCostFitted === 0) {
-      return this.form.ctiCostFitted;
-    }
-
-    const ctiFitted = asEnumerable(this.ctiFitted);
-
-    const foundAxel: { axels: number, cost: number }
-      = ctiFitted
-        .FirstOrDefault((cf) => cf.axels === this.form.axels);
-
-    if (foundAxel) {
-      return foundAxel.cost;
-    }
-
-    return ctiFitted.Max((cf) => cf.cost);
-  }
-
-  public get maintainanceCosts() {
-    return -1 * this.ctiCostFitted * (this.form.ctiEquipmentMaintainancePct / 100);
-  }
-
-  public get totalSavings() {
-    return this.blowoutSavings + this.wearSavings + this.fuelSavings + this.serviceSavings
-      + this.additionalReturns + this.maintainanceSavings + this.infingementSavings
-      + this.maintainanceCosts;
-  }
-
-  public get paybackPeriod() {
-    return this.ctiCostFitted / this.totalSavings;
-  }
-
-  public get paybackScore() {
-    const rounded = Math.floor(this.paybackPeriod * 2) / 2;
-    const ppEnumerable = asEnumerable(this.paybackPeriods)
-      .OrderBy((pp) => pp.period);
-
-    const periods = ppEnumerable
-      .Where((pp) => pp.period >= rounded);
-
-    if (periods.Count()) {
-      return periods.First().points;
-    }
-
-    return ppEnumerable.First().points;
+  public resetForm() {
+    this.form = new CalculatorInputs();
+    this.formKey = Date.now();
+    this.otherBenefits.forEach((ob) => ob.checked = true);
   }
 
   public get totalBenefitsScore() {
     const benefitsScore = asEnumerable(this.otherBenefits).Where((ob) => ob.checked).Sum((ob) => ob.points);
 
-    return benefitsScore + this.paybackScore;
+    return benefitsScore + this.form.paybackScore;
   }
 
   public get benifitScoreBand() {
