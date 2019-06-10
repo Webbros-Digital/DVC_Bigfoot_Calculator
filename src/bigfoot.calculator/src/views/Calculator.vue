@@ -321,8 +321,9 @@
                 </b-form-input>
               </b-input-group>
             </b-form-group>
-            <b-button type='reset'>Reset</b-button>
+            <b-button class='float-right' type='reset'>Reset</b-button>
           </b-form>
+          * Please note that Payback Period and other calculations are not guarantees, but may represent typical results.
         </div>
         <div class='col-12 col-md-6'>
           <h2>Calculations</h2>
@@ -345,7 +346,7 @@
             label-cols-lg="6"
             label="CTI Cost Fitted**"
             label-for="ctiCostFitted"
-            :description="form.ctiCostFitted && form.ctiCostFitted === 0 ? null : '**Indicative cost only used. Contact Bigfoot Equipment Ltd for a Quote. '">
+            :description="form.ctiCostFitted || form.ctiCostFitted === 0 ? null : '**Indicative cost only used. Contact Bigfoot Equipment Ltd for a Quote. '">
             <b-input-group prepend='$'>
               <b-form-input
                 id="ctiCostFitted"
