@@ -4,3 +4,7 @@ $theme-colors: (
   "secondary": #ffc113,
   "danger": #ff4136
 );
+
+$font-family-base: 'Roboto', sans-serif;
+$headings-font-family: 'Alfa Slab One', cursive;
+$headings-color: map-get($map: $theme-colors, $key: primary)

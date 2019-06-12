@@ -15,6 +15,7 @@
     "ordered-imports": false,
     "object-literal-sort-keys": false,
     "no-consecutive-blank-lines": false,
+    "no-inferrable-types": false,
     "trailing-comma": [true, {
       "singleline": "never",
       "multiline": {

@@ -4,6 +4,17 @@ import router from './router';
 import store from './store';
 import './registerServiceWorker';
 import BootstrapVue from 'bootstrap-vue';
+import { library, dom } from '@fortawesome/fontawesome-svg-core';
+import {
+  faRoad, faGasPump, faWrench,
+  faTruckMonster, faCogs, faWind, faList
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+
+dom.watch();
+library.add(faRoad, faGasPump, faWrench, faTruckMonster,
+  faCogs, faWind, faList);
+Vue.component('font-awesome-icon', FontAwesomeIcon);
 
 Vue.use(BootstrapVue);
 
