@@ -397,70 +397,78 @@
                   </p>
                   <p class='text-muted small'>* Please note that Payback Period and other calculations are not guarantees, but may represent typical results.</p>
                   
-                  <h5 class='mt-5'>Savings Breakdown</h5>
                   
-                  <div class='row'>
-                    <div class='col'>
-                      Blowout Savings
-                    </div>
-                    <div class='col'>
-                      ${{ form.blowoutSavings.toFixed(2) }}
-                    </div>
-                  </div>
-                  <div class='row'>
-                    <div class='col'>
-                      Tyre Wear Savings
-                    </div>
-                    <div class='col'>
-                      ${{ form.wearSavings.toFixed(2) }}
-                    </div>
-                  </div>
-                  <div class='row'>
-                    <div class='col'>
-                      Fuel Savings
-                    </div>
-                    <div class='col'>
-                      ${{ form.fuelSavings.toFixed(2) }}
-                    </div>
-                  </div>
-                  <div class='row'>
-                    <div class='col'>
-                      Service Call Savings
-                    </div>
-                    <div class='col'>
-                      ${{ form.serviceSavings.toFixed(2) }}
-                    </div>
-                  </div>
-                  <div class='row'>
-                    <div class='col'>
-                      Extended Season Additional Returns
-                    </div>
-                    <div class='col'>
-                      ${{ form.additionalReturns.toFixed(2) }}
-                    </div>
-                  </div>
-                  <div class='row'>
-                    <div class='col'>
-                      Tyre Maintenance Savings
-                    </div>
-                    <div class='col'>
-                      ${{ form.maintainanceSavings.toFixed(2) }}
-                    </div>
-                  </div>
-                  <div class='row'>
-                    <div class='col'>
-                      HPMV Tyre Infringement Savings
-                    </div>
-                    <div class='col'>
-                      ${{ form.infingementSavings.toFixed(2) }}
-                    </div>
-                  </div>
-                  <div class='row'>
-                    <div class='col'>
-                      CTI Annual Maintenance Costs
-                    </div>
-                    <div class='col'>
-                      ${{ form.maintainanceCosts.toFixed(2) }}
+                  <div class='row justify-content-center mt-5'>
+                    <div class='col-12 col-lg-6'>
+                      <div class='row'>
+                        <div class='col'>
+                          <h5>Savings Breakdown</h5>
+                        </div>
+                      </div>
+                      <div class='row'>
+                        <div class='col'>
+                          Blowout Savings
+                        </div>
+                        <div class='col-3 text-right'>
+                          ${{ form.blowoutSavings.toFixed(2) }}
+                        </div>
+                      </div>
+                      <div class='row'>
+                        <div class='col'>
+                          Tyre Wear Savings
+                        </div>
+                        <div class='col-3 text-right'>
+                          ${{ form.wearSavings.toFixed(2) }}
+                        </div>
+                      </div>
+                      <div class='row'>
+                        <div class='col'>
+                          Fuel Savings
+                        </div>
+                        <div class='col-3 text-right'>
+                          ${{ form.fuelSavings.toFixed(2) }}
+                        </div>
+                      </div>
+                      <div class='row'>
+                        <div class='col'>
+                          Service Call Savings
+                        </div>
+                        <div class='col-3 text-right'>
+                          ${{ form.serviceSavings.toFixed(2) }}
+                        </div>
+                      </div>
+                      <div class='row'>
+                        <div class='col'>
+                          Extended Season Additional Returns
+                        </div>
+                        <div class='col-3 text-right'>
+                          ${{ form.additionalReturns.toFixed(2) }}
+                        </div>
+                      </div>
+                      <div class='row'>
+                        <div class='col'>
+                          Tyre Maintenance Savings
+                        </div>
+                        <div class='col-3 text-right'>
+                          ${{ form.maintainanceSavings.toFixed(2) }}
+                        </div>
+                      </div>
+                      <div class='row'>
+                        <div class='col'>
+                          HPMV Tyre Infringement Savings
+                        </div>
+                        <div class='col-3 text-right'>
+                          ${{ form.infingementSavings.toFixed(2) }}
+                        </div>
+                      </div>
+                      <div class='row'>
+                        <div class='col'>
+                          CTI Annual Maintenance Costs
+                        </div>
+                        <div class='col-3 text-right'>
+                          ${{ form.maintainanceCosts.toFixed(2) }}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
