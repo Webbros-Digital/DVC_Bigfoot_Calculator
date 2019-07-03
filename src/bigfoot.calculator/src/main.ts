@@ -7,13 +7,14 @@ import BootstrapVue from 'bootstrap-vue';
 import { library, dom } from '@fortawesome/fontawesome-svg-core';
 import {
   faRoad, faGasPump, faWrench,
-  faTruckMonster, faCogs, faWind, faList
+  faTruckMonster, faCogs, faWind, faList,
+  faUndoAlt, faCaretRight, faCaretLeft
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 dom.watch();
 library.add(faRoad, faGasPump, faWrench, faTruckMonster,
-  faCogs, faWind, faList);
+  faCogs, faWind, faList, faUndoAlt, faCaretRight, faCaretLeft);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 
 Vue.use(BootstrapVue);

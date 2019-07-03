@@ -7,4 +7,8 @@ $theme-colors: (
 
 $font-family-base: 'Roboto', sans-serif;
 $headings-font-family: 'Alfa Slab One', cursive;
-$headings-color: map-get($map: $theme-colors, $key: primary)
+$headings-color: map-get($map: $theme-colors, $key: primary);
+
+$body-bg: #1a325d;
+$body-color: white;
+$headings-color: map-get($map: $theme-colors, $key: secondary);

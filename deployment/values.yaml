@@ -1,4 +1,4 @@
 web_environment: production
 web:
-    tag: "0.03"
+    tag: "0.05"
     url: bfcalc.philo.co.nz

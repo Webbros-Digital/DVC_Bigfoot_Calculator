@@ -3,11 +3,22 @@
     <div class='col'>
       <div class='row'>
         <div class='col'>
-          <h1>Bigfoot Benefits and Payback Calculator</h1>
+          <div ref='scrollHolder'></div>
           <form-wizard title=''
             subtitle='' color='#ffc113' ref="formWizard"
-            @on-change='wizardPageChanged'>
+            @on-change='wizardPageChanged'
+            shape='circle'>
+            <template slot="step" slot-scope="props">
+              <wizard-step :tab="props.tab"
+                :step-size="props.stepSize"
+                @click.native="props.navigateToTab(props.index)"
+                @keyup.enter.native="props.navigateToTab(props.index)"
+                :transition="props.transition"
+                :index="props.index">
+              </wizard-step>
+            </template>
             <tab-content title="Road" icon='fas fa-road' class='pt-2 pt-md-4'>
+              <h2>1. Road</h2>
               <b-form-group
                 label-cols-sm="6"
                 label-cols-lg="8"
@@ -32,7 +43,13 @@
                 <b-form-input id="roadConditions" type='range' min='1' max='5'
                   v-model.number="form.roadConditions">
                 </b-form-input>
-                <div><span class='float-right text-muted'>{{ form.roadConditions }}</span></div>
+                <div class='d-flex justify-content-between'>
+                  <div>1</div>
+                  <div>2</div>
+                  <div>3</div>
+                  <div>4</div>
+                  <div>5</div>
+                </div>
               </b-form-group>
               <b-form-group
                 label-cols-sm="6"
@@ -52,6 +69,7 @@
               </b-form-group>
             </tab-content>
             <tab-content title="Fuel" icon='fas fa-gas-pump' class='pt-2 pt-md-4'>
+              <h2>2. Fuel</h2>
               <b-form-group
                 label-cols-sm="6"
                 label-cols-lg="8"
@@ -86,25 +104,9 @@
                   </b-form-input>
                 </b-input-group>
               </b-form-group>
-              <b-form-group
-                label-cols-sm="6"
-                label-cols-lg="8"
-                label="Fuel Consumption savings when using CTI (%)"
-                label-for="fuelConsumptionSavingsPct">
-                <b-input-group append='%'>
-                  <b-form-input
-                    id="fuelConsumptionSavingsPct"
-                    type='range'
-                    min='1'
-                    max='5'
-                    step='0.5'
-                    v-model.number="form.fuelConsumptionSavingsPct">
-                  </b-form-input>
-                </b-input-group>
-                <div><span class='float-right text-muted'>{{ form.fuelConsumptionSavingsPct }}</span></div>
-              </b-form-group>
             </tab-content>
             <tab-content title="Vehicle" icon='fas fa-truck-monster' class='pt-2 pt-md-4'>
+              <h2>3. Vehicle</h2>
               <b-form-group
                 label-cols-sm="6"
                 label-cols-lg="8"
@@ -129,7 +131,7 @@
                   id="tyres"
                   type='number'
                   min='1'
-                  max='10'
+                  max='1000'
                   step='1'
                   v-model.number="form.tyres"
                   v-on:keyup.enter="nextInput($event)">
@@ -170,7 +172,8 @@
                 </b-input-group>
               </b-form-group>
             </tab-content>
-            <tab-content title="Service" icon='fas fa-wrench' class='pt-2 pt-md-4'>
+            <tab-content title="Costs & Benfits" icon='fas fa-cogs' class='pt-2 pt-md-4'>
+              <h2>4. Costs & Benfits</h2>
               <b-form-group
                 label-cols-sm="6"
                 label-cols-lg="8"
@@ -267,14 +270,12 @@
                   </b-form-input>
                 </b-input-group>
               </b-form-group>
-            </tab-content>
-            <tab-content title="Operating Costs" icon='fas fa-cogs' class='pt-2 pt-md-4'>
               <b-form-group
                 label-cols-sm="6"
                 label-cols-lg="8"
-                label="CTI Cost Fitted**"
+                label="CTI Cost Fitted **"
                 label-for="ctiCostFitted"
-                :description="form.ctiCostFitted || form.ctiCostFitted === 0 ? null : '**Indicative cost only used. Contact Bigfoot Equipment Ltd for a Quote. '">
+                :description="form.ctiCostFitted || form.ctiCostFitted === 0 ? null : '** Indicative cost only used. Contact Bigfoot Equipment Ltd for a Quote. '">
                 <b-input-group prepend='$'>
                   <b-form-input
                     id="ctiCostFitted"
@@ -340,135 +341,37 @@
                 </b-input-group>
               </b-form-group>
             </tab-content>
-            <tab-content title="Other Benefits" icon='fas fa-wind' class='pt-2 pt-md-4'>
-              <div class='row'>
-                <div class='col'>
-                  <p class='text-muted small'>
-                    Tick what matters to You
-                  </p>
-                  <div class='row'>
-                    <div class='col text-left'>
-                      <template v-for='(benefit, index) in otherBenefits'>
-                        <div class='row mb-2 mb-lg-4' :key='benefit.id'
-                            v-if='index % 2 == 0'>
-                          <div class='col'>
-                            <b-form-checkbox
-                              :id="'benefit_' + benefit.id"
-                              v-model="benefit.checked"
-                              class='col'
-                              >
-                              {{ benefit.description}}
-                            </b-form-checkbox>
-                          </div>
-                        </div>
-                      </template>
+            <tab-content title="Summary" icon='fas fa-list' class='pt-2 pt-md-4 pb-2 pb-md-4'>
+              <h2>Summary</h2>
+              <div class='row mb-5'>
+                <div class='col text-center'>
+                  <div class='benefits d-inline-block'>
+                    <div class='speedo'>
+                      <img :src="speedoImg" class='img-fluid speedo' />
                     </div>
-                    <div class='col text-left'>
-                      <template v-for='(benefit, index) in otherBenefits'>
-                        <div class='row mb-2 mb-lg-4' :key='benefit.id'
-                            v-if='index % 2 == 1'>
-                          <div class='col'>
-                            <b-form-checkbox
-                              :id="'benefit_' + benefit.id"
-                              v-model="benefit.checked"
-                              class='col'
-                              >
-                              {{ benefit.description}}
-                            </b-form-checkbox>
-                          </div>
-                        </div>
-                      </template>
+                    <h4 class='text-white mb-4'>Total Benefits</h4>
+                    <div class='paybackPeriod p-2 pl-4 pr-4'>
+                      Payback Period: <span class='text-primary'><b>{{ form.paybackPeriod.toFixed(2) }} Years | </b></span>Total&nbsp;Savings: <span class='text-primary'><b>${{ form.totalSavings.toFixed(2) }}</b></span>
                     </div>
                   </div>
+                  <!-- <p class='text-muted small'>* Please note that Payback Period and other calculations are not guarantees, but may represent typical results.</p> -->
                 </div>
               </div>
-            </tab-content>
-            <tab-content title="Summary" icon='fas fa-list' class='pt-2 pt-md-4 pb-2 pb-md-4'>
-              <div class='row'>
-                <div class='col'>
-                  <p>
-                    Total Benefits Score: <b class='float-right'>{{ benifitScoreBand }}</b>
-                  </p>
-                  <p>
-                    Payback Period: <b class='float-right'>{{ form.paybackPeriod.toFixed(2) }} years</b>
-                  </p>
-                  <p>
-                    Total Savings: <b class='float-right'>${{ form.totalSavings.toFixed(2) }}</b>
-                  </p>
-                  <p class='text-muted small'>* Please note that Payback Period and other calculations are not guarantees, but may represent typical results.</p>
-                  
-                  
-                  <div class='row justify-content-center mt-5'>
-                    <div class='col-12 col-lg-6'>
-                      <div class='row'>
-                        <div class='col'>
-                          <h5>Savings Breakdown</h5>
-                        </div>
-                      </div>
-                      <div class='row'>
-                        <div class='col'>
-                          Blowout Savings
-                        </div>
-                        <div class='col-3 text-right'>
-                          ${{ form.blowoutSavings.toFixed(2) }}
-                        </div>
-                      </div>
-                      <div class='row'>
-                        <div class='col'>
-                          Tyre Wear Savings
-                        </div>
-                        <div class='col-3 text-right'>
-                          ${{ form.wearSavings.toFixed(2) }}
-                        </div>
-                      </div>
-                      <div class='row'>
-                        <div class='col'>
-                          Fuel Savings
-                        </div>
-                        <div class='col-3 text-right'>
-                          ${{ form.fuelSavings.toFixed(2) }}
-                        </div>
-                      </div>
-                      <div class='row'>
-                        <div class='col'>
-                          Service Call Savings
-                        </div>
-                        <div class='col-3 text-right'>
-                          ${{ form.serviceSavings.toFixed(2) }}
-                        </div>
-                      </div>
-                      <div class='row'>
-                        <div class='col'>
-                          Extended Season Additional Returns
-                        </div>
-                        <div class='col-3 text-right'>
-                          ${{ form.additionalReturns.toFixed(2) }}
-                        </div>
-                      </div>
-                      <div class='row'>
-                        <div class='col'>
-                          Tyre Maintenance Savings
-                        </div>
-                        <div class='col-3 text-right'>
-                          ${{ form.maintainanceSavings.toFixed(2) }}
-                        </div>
-                      </div>
-                      <div class='row'>
-                        <div class='col'>
-                          HPMV Tyre Infringement Savings
-                        </div>
-                        <div class='col-3 text-right'>
-                          ${{ form.infingementSavings.toFixed(2) }}
-                        </div>
-                      </div>
-                      <div class='row'>
-                        <div class='col'>
-                          CTI Annual Maintenance Costs
-                        </div>
-                        <div class='col-3 text-right'>
-                          ${{ form.maintainanceCosts.toFixed(2) }}
-                        </div>
-                      </div>
+              <hr />
+              <div class='row mt-5'>
+                <div class='col-12 col-lg-10'>
+                  <div class='row'>
+                    <div class='col'>
+                      <h5>Savings Breakdown</h5>
+                    </div>
+                  </div>
+                  <div class='row' v-for='bd in breakdown' :key='bd.text'>
+                    <div class='col-12 col-sm-10 d-flex'>
+                      <div class='bd-name'>{{ bd.text }}</div>
+                      <div class='filler d-none d-sm-flex'></div>
+                    </div>
+                    <div class='col-12 col-sm-2 text-right text-sm-left d-flex'>
+                      <div class='filler d-sm-none'></div><b>${{ bd.value }}</b>
                     </div>
                   </div>
                 </div>
@@ -477,15 +380,18 @@
             <template slot="footer" slot-scope="props">
               <div class='row'>
                 <div class='col-6'>
-                  <button class="wizard-btn bg-secondary text-primary" tabindex="-1" type="button" v-if="props.activeTabIndex > 0" @click="prevPage(props)" :style="props.fillButtonStyle">
-                    Previous
+                  <button class="wizard-btn previous" tabindex="-1" type="button" v-if="props.activeTabIndex > 0" @click="prevPage(props)">
+                    Previous <i class='fas fa-caret-left'></i>
                   </button>
                 </div>
                 <div class='col-6 text-right'>
-                  <button class="wizard-btn bg-secondary text-primary" tabindex="-1" type="button" v-if="!props.isLastStep" @click="nextPage(props)" :style="props.fillButtonStyle">
-                    Next
+                  <button class="wizard-btn next" tabindex="-1" type="button" v-if="!props.isLastStep" @click="nextPage(props)">
+                    Next <font-awesome-icon icon="caret-right" />
                   </button>
-                  <b-button @click='resetForm' tabindex="-1" class='wizard-btn bg-primary text-secondary' v-else>Reset</b-button>
+
+                  <b-button @click='resetForm' tabindex="-1" class='wizard-btn reset' v-else>
+                    Reset <font-awesome-icon icon="undo-alt" />
+                  </b-button>
                 </div>
               </div>
             </template>
@@ -497,21 +403,25 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue, Watch } from 'vue-property-decorator';
 import { asEnumerable } from 'linq-es2015';
 import CalculatorInputs from '@/models/calculator-inputs';
 import {FormWizard, TabContent } from 'vue-form-wizard';
 import 'vue-form-wizard/dist/vue-form-wizard.min.css';
+import CustomWizardStep from '@/components/CustomWizardStep.vue';
 
 @Component({
   components: {
     FormWizard,
-    TabContent
+    TabContent,
+    'wizard-step': CustomWizardStep
   }
 })
 export default class Calculator extends Vue {
   public $refs!: Vue['$refs'] & {
-    formWizard: { reset: () => void, $el: Element}
+    formWizard: { reset: () => void, $el: Element},
+    // speedo: HTMLCanvasElement
+    scrollHolder: HTMLElement
   };
 
   public formKey: number = Date.now();
@@ -563,6 +473,111 @@ export default class Calculator extends Vue {
     }
   ];
 
+  public get speedoImg() {
+    if (this.totalBenefitsScore >= 80) {
+      return require('@/assets/images/veryhigh.png');
+    }
+    if (this.totalBenefitsScore >= 60) {
+      return require('@/assets/images/high.png');
+    }
+    if (this.totalBenefitsScore >= 40) {
+      return require('@/assets/images/medium.png');
+    }
+    return require('@/assets/images/low.png');
+  }
+
+  // public mounted() {
+  //   this.benifitChanged();
+  // }
+
+  // @Watch('benifitScoreBand')
+  // public benifitChanged() {
+  //   const canvas = this.$refs.speedo;
+  //   const ctx = canvas.getContext('2d');
+  //   if (ctx) {
+  //     // ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  //     ctx.strokeStyle = 'rgb(255, 193, 19)';
+  //     ctx.lineWidth = 8;
+  //     ctx.lineCap = 'round';
+
+  //     const radius = canvas.height - 100;
+
+  //     ctx.beginPath();
+  //     ctx.arc(canvas.width / 2, canvas.height, radius, 1 * Math.PI, 0);
+  //     ctx.stroke();
+
+  //     this.addNub(canvas, ctx, radius, 90);
+  //   }
+  // }
+
+  // public addNub(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, radius: number, angle: number) {
+  //   // ctx.moveTo(canvas.width / 2, canvas.height);
+  //   // ctx.rotate(angle);
+  //   // ctx.moveTo(0, radius);
+  //   ctx.lineTo(0, radius + 50);
+  //   ctx.stroke();
+  //   // ctx.rotate(-1 * angle);
+  //   // ctx.moveTo(canvas.width / 2, canvas.height);
+  // }
+
+  public get breakdown() {
+    return [
+      {
+        text: 'Blowout Savings',
+        value: this.form.blowoutSavings.toFixed(2)
+      },
+      {
+        text: 'Tyre Wear Savings',
+        value: this.form.wearSavings.toFixed(2)
+      },
+      {
+        text: 'Fuel Savings',
+        value: this.form.fuelSavings.toFixed(2)
+      },
+      {
+        text: 'Service Call Savings',
+        value: this.form.serviceSavings.toFixed(2)
+      },
+      {
+        text: 'Extended Season Additional Returns',
+        value: this.form.additionalReturns.toFixed(2)
+      },
+      {
+        text: 'Tyre Maintenance Savings',
+        value: this.form.maintainanceSavings.toFixed(2)
+      },
+      {
+        text: 'HPMV Tyre Infringement Savings',
+        value: this.form.infingementSavings.toFixed(2)
+      },
+      {
+        text: 'CTI Annual Maintenance Costs',
+        value: this.form.maintainanceCosts.toFixed(2)
+      }
+    ];
+  }
+
+  public get guageOptions() {
+    return {
+      angle: 0,
+      lineWidth: 0.44,
+      radiusScale: 1,
+      pointer: {
+        length: 0.6,
+        strokeWidth: 0.035,
+        color: '#000000'
+      },
+      limitMax: false,
+      limitMin: false,
+      colorStart: '#6FADCF',
+      colorStop: '#8FC0DA',
+      strokeColor: '#E0E0E0',
+      generateGradient: true,
+      highDpiSupport: true
+    };
+  }
+
   public resetForm() {
     this.form = new CalculatorInputs();
     this.formKey = Date.now();
@@ -572,7 +587,7 @@ export default class Calculator extends Vue {
   }
 
   public wizardPageChanged() {
-    this.$refs.formWizard.$el.scrollIntoView({
+    this.$refs.scrollHolder.scrollIntoView({
       behavior: 'smooth',
       block: 'start'
     });
@@ -660,68 +675,97 @@ export default class Calculator extends Vue {
 }
 </script>
 <style lang="scss">
+.vue-form-wizard.md .wizard-navigation .wizard-progress-with-circle {
+  top: 25px;
+  background-color: #7687a6;
+}
+hr {
+  background-color: white;
+}
 
-.vue-form-wizard.md {
-  .wizard-icon-circle {
-    outline: none;
+.benefits {
+  .paybackPeriod {
+    background-color: rgb(255, 193, 19);
+    border-radius: 8px;
+    color: black;
   }
-  .wizard-nav-pills > li.active > a .wizard-icon-circle {
-    background-color: #ffc113;
-  }
-  .wizard-icon-circle .wizard-icon,
-  .wizard-nav-pills > li.active > a .wizard-icon {
-    margin-top: auto;
-    margin-bottom: auto;
-    font-size: 1.3em;
-    color: #1a325d;
-  }
-  .wizard-btn {
-    min-width: 80px;
-  }
-  
-  .wizard-tab-content,
-  .wizard-card-footer {
+}
+.bd-name {
+  white-space: pre;
+  padding-right: 5px;
+}
+.filler {
+  width: 100%;
+  height: 1.2em;
+  border-bottom: 1px solid rgb(255, 193, 19);
+  display: inline-block;
+}
+.vue-form-wizard .wizard-nav-pills {
+  flex-wrap: nowrap;
+}
+.vue-form-wizard .wizard-card-footer {
+  button.wizard-btn {
+    background-color: #1a325d;
+    border: 2px solid rgb(255, 193, 19);
+    color: rgb(255, 193, 19);
+    height: 2em;
     padding: 0;
+    padding-left: 6px;
+    padding-right: 6px;
+    min-width: fit-content;
+    font-family: "Alfa Slab One", cursive;
+    font-weight: 200;
+    font-size: 1.2em;
+    svg {
+      position: absolute;
+      right: 0;
+      height: 101%;
+      width: 2.1em;
+      margin-top: -6px;
+      background-color: rgb(255, 193, 19);
+      border: 1px solid rgb(255, 193, 19);
+      color: white;
+      border-radius: 20px;
+    }
   }
-} 
-@media (max-width: 800px) {
-  .vue-form-wizard.md {
-    .wizard-navigation .wizard-progress-with-circle {
-      top: 25px;
+  button.wizard-btn.previous {
+    padding-left: 30px;
+    margin-left: 5px;
+    border-radius: 0 5px 5px 0;
+    svg {
+      left: 0;
+      padding-right: 5px;
     }
-    .wizard-icon-circle {
-      width: 40px;
-      height: 40px;
-      font-size: 24px;
+  }
+  button.wizard-btn.next,
+  button.wizard-btn.reset {
+    padding-right: 30px;
+    margin-right: 5px;
+    border-radius: 5px 0 0 5px;
+    svg {
+      right: 0;
+      padding-left: 5px;
     }
-    .wizard-icon-circle .wizard-icon,
-    .wizard-nav-pills > li.active > a .wizard-icon {
-      font-size: 0.8em;
-    }
-    .stepTitle {
-      font-size: 0.6em;
+  }
+  button.wizard-btn.reset {
+    border-color: #f26a2f;
+    color: #f26a2f;
+    svg {
+      background-color: #f26a2f;
+      border-color: #f26a2f;
+      padding: 8px;
     }
   }
 }
-@media (max-width: 400px) {
-  .vue-form-wizard.md {
-     .wizard-navigation .wizard-progress-with-circle {
-      top: 22px;
-    }
-    .wizard-icon-circle {
-      width: 34px;
-      height: 34px;
-      font-size: 1em;
-    }
-    
-    .wizard-icon-circle .wizard-icon,
-    .wizard-nav-pills > li.active > a .wizard-icon {
-      font-size: 0.8em;
-    }
-    .stepTitle {
-      font-size: 0.6em;
-    }
-  }
+.custom-range::-moz-range-thumb {
+  background-color: rgb(255, 193, 19) !important;
 }
+
+.custom-range::-webkit-slider-thumb {
+  background-color: rgb(255, 193, 19) !important;
+}
+// canvas {
+//   width: 100%;
+// }
 
 </style>
