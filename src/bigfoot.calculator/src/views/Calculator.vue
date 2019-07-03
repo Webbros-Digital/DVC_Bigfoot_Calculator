@@ -708,7 +708,7 @@ hr {
     background-color: #1a325d;
     border: 2px solid rgb(255, 193, 19);
     color: rgb(255, 193, 19);
-    height: 2em;
+    height: 40px;
     padding: 0;
     padding-left: 6px;
     padding-right: 6px;
@@ -719,9 +719,9 @@ hr {
     svg {
       position: absolute;
       right: 0;
-      height: 101%;
+      height: 100%;
       width: 2.1em;
-      margin-top: -6px;
+      top:0;
       background-color: rgb(255, 193, 19);
       border: 1px solid rgb(255, 193, 19);
       color: white;
