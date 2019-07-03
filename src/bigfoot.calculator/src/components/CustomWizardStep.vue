@@ -136,6 +136,10 @@
     right: 32px;
     align-items: center;
     justify-content: center;
+    svg {
+      width: 20px;
+      height: 20px;
+    }
   }
   .complete {
     .wizard-step-index {
