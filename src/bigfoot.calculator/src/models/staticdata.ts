@@ -15,8 +15,8 @@ const ctiFitted: Array<{ axels: number, cost: number }> = [
 ];
 
 const paybackPeriods: Array<{ period: number, points: number }> = [
-  { period: -10.0, points: 0   },
-  { period: 0	 , points: 0     },
+  { period: -10.0, points: 60   },
+  { period: 0	 , points: 60     },
   { period: 1	 , points: 60    },
   { period: 1.5	 , points: 55},
   { period: 2	 , points: 50    },
