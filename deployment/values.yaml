@@ -1,4 +1,4 @@
 web_environment: production
 web:
-    tag: "0.08"
-    url: bfcalc.philo.co.nz
+    tag: "0.09"
+    url: calculator.bigfoot.co.nz

@@ -3,10 +3,12 @@
     <template v-if='landingPage'>
       <div class='col mt-4'>
         <div class='row mb-4'>
-          <h2>What's important to you?</h2>
+          <div class='col'>
+            <h2>What's important to you?</h2>
+          </div>
         </div>
         <div class='row align-items-center'>
-          <div class='col border-right'>
+          <div class='col-12 col-md-6 border-right'>
             <div class='row'>
               <div class='col text-left'>
                 <template v-for='(benefit, index) in otherBenefits'>
@@ -42,7 +44,7 @@
               </div>
             </div>
           </div>
-          <div class='col text-center'>
+          <div class='col-12 col-md-6 text-center mt-4 mt-md-0'>
             <b-button class='startButton' @click='landingPage = false'>
               <img src='@/assets/images/startbutton.png' /><div>Start</div>
               <div class='ignition'>&nbsp;</div>
@@ -429,7 +431,7 @@
         <template slot="footer" slot-scope="props">
           <div class='row'>
             <div class='col-6'>
-              <button class="wizard-btn previous" tabindex="-1" type="button" v-if="props.activeTabIndex > 0" @click="prevPage(props)">
+              <button class="wizard-btn previous" tabindex="-1" type="button" @click="prevPage(props)">
                 Previous <i class='fas fa-caret-left'></i>
               </button>
             </div>
@@ -666,8 +668,12 @@ export default class Calculator extends Vue {
     }
   }
 
-  public prevPage(props: {prevTab: () => void}) {
-    props.prevTab();
+  public prevPage(props: {prevTab: () => void, activeTabIndex: number}) {
+    if (props.activeTabIndex === 0) {
+      this.landingPage = true;
+    } else {
+      props.prevTab();
+    }
   }
 
   public nextPage(props: {nextTab: () => void}) {
@@ -728,8 +734,16 @@ export default class Calculator extends Vue {
   color: #1a325d !important;
   border-color: white !important;
 }
+.row .col-12.border-right {
+  border-right: 2px solid white !important;
+}
+@media (max-width: 767px) {
+  .row .col-12.border-right {
+    border-right: 0 !important;
+  }
+}
 button.btn.startButton {
-  height: 76px;
+  height: 88px;
   background-color: transparent;
   border: none;
   div {
@@ -746,7 +760,7 @@ button.btn.startButton {
     width: 6px;
     top: -84px;
     right: -42px;
-    transform: rotate(-38deg);
+    transform: rotate(-42deg);
     transition: transform 0.2s ease;
   }
   img {
