@@ -1,7 +1,7 @@
 <template>
-  <div class="row">
+  <div class="row mt-5 mb-5" style='min-height: 500px'>
     <template v-if='landingPage'>
-      <div class='col mt-4'>
+      <div class='col'>
         <div class='row mb-4'>
           <div class='col'>
             <h2>What's important to you?</h2>
@@ -54,7 +54,6 @@
       </div>
     </template>
     <div class='col' v-else>
-      <div ref='scrollHolder'></div>
       <form-wizard title=''
         subtitle='' color='#ffc113' ref="formWizard"
         @on-change='wizardPageChanged'
@@ -468,9 +467,7 @@ import CustomWizardStep from '@/components/CustomWizardStep.vue';
 })
 export default class Calculator extends Vue {
   public $refs!: Vue['$refs'] & {
-    formWizard: { reset: () => void, $el: Element},
-    // speedo: HTMLCanvasElement
-    scrollHolder: HTMLElement
+    formWizard: { reset: () => void, $el: Element}
   };
 
   public formKey: number = Date.now();
@@ -638,9 +635,9 @@ export default class Calculator extends Vue {
   }
 
   public wizardPageChanged() {
-    this.$refs.scrollHolder.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start'
+    window.scrollTo({
+      top: 500,
+      behavior: 'smooth'
     });
   }
 
