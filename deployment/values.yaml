@@ -1,4 +1,4 @@
 web_environment: production
 web:
-    tag: "0.13"
+    tag: "0.14"
     url: calculator.bigfoot.co.nz
