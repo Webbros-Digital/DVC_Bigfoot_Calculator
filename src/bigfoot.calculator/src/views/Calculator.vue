@@ -4,7 +4,7 @@
       <div class='col'>
         <div class='row mb-4'>
           <div class='col'>
-            <h2>What's important to you?</h2>
+            <h2>What's Important To You?</h2>
           </div>
         </div>
         <div class='row align-items-center'>
@@ -73,7 +73,7 @@
           <b-form-group
             label-cols-sm="6"
             label-cols-lg="8"
-            label="Annual Distace Travelled"
+            label="Annual Distance Travelled"
             label-for="distance">
             <b-input-group append='km'>
               <b-form-input
@@ -534,41 +534,6 @@ export default class Calculator extends Vue {
     return require('@/assets/images/low.png');
   }
 
-  // public mounted() {
-  //   this.benifitChanged();
-  // }
-
-  // @Watch('benifitScoreBand')
-  // public benifitChanged() {
-  //   const canvas = this.$refs.speedo;
-  //   const ctx = canvas.getContext('2d');
-  //   if (ctx) {
-  //     // ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  //     ctx.strokeStyle = 'rgb(255, 193, 19)';
-  //     ctx.lineWidth = 8;
-  //     ctx.lineCap = 'round';
-
-  //     const radius = canvas.height - 100;
-
-  //     ctx.beginPath();
-  //     ctx.arc(canvas.width / 2, canvas.height, radius, 1 * Math.PI, 0);
-  //     ctx.stroke();
-
-  //     this.addNub(canvas, ctx, radius, 90);
-  //   }
-  // }
-
-  // public addNub(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, radius: number, angle: number) {
-  //   // ctx.moveTo(canvas.width / 2, canvas.height);
-  //   // ctx.rotate(angle);
-  //   // ctx.moveTo(0, radius);
-  //   ctx.lineTo(0, radius + 50);
-  //   ctx.stroke();
-  //   // ctx.rotate(-1 * angle);
-  //   // ctx.moveTo(canvas.width / 2, canvas.height);
-  // }
-
   public get breakdown() {
     return [
       {
@@ -812,7 +777,11 @@ hr {
 }
 .vue-form-wizard .wizard-nav-pills {
   flex-wrap: nowrap;
+  div:focus {
+    outline: none;
+  }
 }
+.custom-checkbox label,
 .col-form-label {
   text-transform: capitalize;
 }
