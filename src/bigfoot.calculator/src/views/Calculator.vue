@@ -54,6 +54,7 @@
       </div>
     </template>
     <div class='col' v-else>
+      <div class='wizard-nav-behind'></div>
       <form-wizard title=''
         subtitle='' color='#ffc113' ref="formWizard"
         @on-change='wizardPageChanged'
@@ -87,7 +88,7 @@
           <b-form-group
             label-cols-sm="6"
             label-cols-lg="8"
-            label="Road Conditions (Flat Good =1, Steep Poor = 5)"
+            label="Poorest Operating Conditions (Flat Low Traction Surface =1, Inclined Low Traction Surface = 5)"
             label-for="roadConditions"
             type='number'>
             <b-form-input id="roadConditions" type='range' min='1' max='5'
@@ -140,7 +141,7 @@
           <b-form-group
             label-cols-sm="6"
             label-cols-lg="8"
-            label="Fuel Consumption (normal)  (km per litre)"
+            label="Fuel Consumption (average)"
             label-for="fuelConsumption">
             <b-input-group append='km/l'>
               <b-form-input
@@ -207,7 +208,7 @@
           <b-form-group
             label-cols-sm="6"
             label-cols-lg="8"
-            label="Tyre wear savings when using CTI (%)"
+            label="Tyre wear savings when using CTI"
             label-for="tyreWearPct">
             <b-input-group append='%'>
               <b-form-input
@@ -740,30 +741,30 @@ export default class Calculator extends Vue {
   }
 }
 button.btn.startButton {
-  height: 88px;
+  // height: 110px;
   background-color: transparent;
   border: none;
   div {
     position: relative;
-    right: -29px;
-    top: -54px;
+    right: -34px;
+    top: -63px;
     color: #ffc113;
     font-family: "Alfa Slab One", cursive;
     font-size: 23px;
   }
   div.ignition {
     background-color: #F26522;
-    height: 23px;
+    height: 28px;
     width: 6px;
-    top: -84px;
-    right: -42px;
+    top: -96px;
+    right: -53px;
     transform: rotate(-42deg);
     transition: transform 0.2s ease;
   }
   img {
     position: relative;
     left: 0;
-    width: 177px;
+    width: 221px;
   }
 }
 button.btn.startButton:focus,
@@ -777,9 +778,16 @@ button.btn.startButton:hover {
     transform: rotate(0deg);
   }
 }
+.wizard-nav-behind {
+  position: relative;
+  top: 58px;
+  height: 4px;
+  background-color: #7687a6;
+  width: 93%;
+}
 .vue-form-wizard.md .wizard-navigation .wizard-progress-with-circle {
   top: 25px;
-  background-color: #7687a6;
+  background-color: transparent;
 }
 hr {
   background-color: white;
@@ -804,6 +812,9 @@ hr {
 }
 .vue-form-wizard .wizard-nav-pills {
   flex-wrap: nowrap;
+}
+.col-form-label {
+  text-transform: capitalize;
 }
 .vue-form-wizard .wizard-card-footer {
   button.wizard-btn {
