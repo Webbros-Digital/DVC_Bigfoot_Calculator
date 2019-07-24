@@ -19,6 +19,12 @@ Vue.component('font-awesome-icon', FontAwesomeIcon);
 
 Vue.use(BootstrapVue);
 
+import VueAnalytics from 'vue-analytics';
+
+Vue.use(VueAnalytics, {
+  id: 'UA-141227442-2'
+});
+
 import '@/assets/scss/theme.scss';
 
 Vue.config.productionTip = false;

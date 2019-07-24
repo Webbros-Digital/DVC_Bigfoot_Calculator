@@ -45,7 +45,7 @@
             </div>
           </div>
           <div class='col-12 col-md-6 text-center mt-4 mt-md-0'>
-            <b-button class='startButton' @click='landingPage = false'>
+            <b-button class='startButton' @click='startButtonClick'>
               <img src='@/assets/images/startbutton.png' /><div>Start</div>
               <div class='ignition'>&nbsp;</div>
             </b-button>
@@ -88,7 +88,7 @@
           <b-form-group
             label-cols-sm="6"
             label-cols-lg="8"
-            label="Poorest Operating Conditions (Flat Low Traction Surface =1, Inclined Low Traction Surface = 5)"
+            label="Road Conditions (Moderate terrain, Good Surface =1, Challenging Terrain and Surface = 5)"
             label-for="roadConditions"
             type='number'>
             <b-form-input id="roadConditions" type='range' min='1' max='5'
@@ -105,7 +105,7 @@
           <b-form-group
             label-cols-sm="6"
             label-cols-lg="8"
-            label="Percentage where CTI is required"
+            label="Percentage where CTI is required (the Bigfoot advantage)"
             label-for="ctiReqPct">
             <b-input-group append='%'>
               <b-form-input
@@ -275,38 +275,6 @@
           <b-form-group
             label-cols-sm="6"
             label-cols-lg="8"
-            label="HPMV Infringements per year"
-            label-for="infringements">
-            <b-form-input
-              id="infringements"
-              type='number'
-              min='0'
-              max='100'
-              step='0.1'
-              v-model.number="form.infringements"
-              v-on:keyup.enter="nextInput($event)">
-            </b-form-input>
-          </b-form-group>
-          <b-form-group
-            label-cols-sm="6"
-            label-cols-lg="8"
-            label="HPMV Tyre Inflation Infringement Cost"
-            label-for="infringementCost">
-            <b-input-group prepend='$'>
-              <b-form-input
-                id="infringementCost"
-                type='number'
-                min='0'
-                max='10000'
-                step='1'
-                v-model.number="form.infringementCost"
-                v-on:keyup.enter="nextInput($event)">
-              </b-form-input>
-            </b-input-group>
-          </b-form-group>
-          <b-form-group
-            label-cols-sm="6"
-            label-cols-lg="8"
             label="Tyre Maintenance Checks ($ per month)"
             label-for="maintainanceChecks">
             <b-input-group prepend='$'>
@@ -318,25 +286,6 @@
                 step='0.01'
                 v-model.number="form.maintainanceChecks"
                 v-on:keyup.enter="$refs.formWizard.nextTab()">
-              </b-form-input>
-            </b-input-group>
-          </b-form-group>
-          <b-form-group
-            label-cols-sm="6"
-            label-cols-lg="8"
-            label="CTI Cost Fitted **"
-            label-for="ctiCostFitted"
-            :description="form.ctiCostFitted || form.ctiCostFitted === 0 ? null : '** Indicative cost only used. Contact Bigfoot Equipment Ltd for a Quote. '">
-            <b-input-group prepend='$'>
-              <b-form-input
-                id="ctiCostFitted"
-                type='number'
-                min='0'
-                max='10000'
-                step='1'
-                v-model.number="form.ctiCostFitted"
-                :placeholder="form.getCtiCostFitted + ''"
-                v-on:keyup.enter="nextInput($event)">
               </b-form-input>
             </b-input-group>
           </b-form-group>
@@ -374,23 +323,6 @@
               </b-form-input>
             </b-input-group>
           </b-form-group>
-          <b-form-group
-            label-cols-sm="6"
-            label-cols-lg="8"
-            label="Net return per day"
-            label-for="returnPerDay">
-            <b-input-group prepend='$'>
-              <b-form-input
-                id="returnPerDay"
-                type='number'
-                min='0'
-                max='10000'
-                step='0.01'
-                v-model.number="form.returnPerDay"
-                v-on:keyup.enter="$refs.formWizard.nextTab()">
-              </b-form-input>
-            </b-input-group>
-          </b-form-group>
         </tab-content>
         <tab-content title="Summary" icon='fas fa-list' class='pt-2 pt-md-4 pb-2 pb-md-4'>
           <h2>Summary</h2>
@@ -400,9 +332,14 @@
                 <div class='speedo'>
                   <img :src="speedoImg" class='img-fluid speedo' />
                 </div>
-                <h4 class='text-white mb-4'>Total Benefits</h4>
+                <h4 class='text-white mb-4'>Bigfoot Benefits</h4>
                 <div class='paybackPeriod p-2 pl-4 pr-4'>
-                  Payback Period: <span class='text-primary'><b>{{ form.paybackPeriod.toFixed(2) }} Years | </b></span>Total&nbsp;Savings: <span class='text-primary'><b>${{ form.totalSavings.toFixed(2) }}</b></span>
+                  Payback Period: <span class='text-primary'><b>{{ form.paybackPeriod.toFixed(2) }} Years | </b></span>Total&nbsp;Savings: <span class='text-primary'><b>${{ form.totalSavings.toFixed(0) }}</b></span>
+                </div>
+                <div class='requestQuote mt-4'> 
+                  <a href='https://www.bigfoot.co.nz/#SITE_FOOTERinlineContent' target='_blank'>
+                    <button class='btn wizard-btn previous' type='button' @click="requestQuote">Request a Quote</button>
+                  </a>
                 </div>
               </div>
               <!-- <p class='text-muted small'>* Please note that Payback Period and other calculations are not guarantees, but may represent typical results.</p> -->
@@ -458,6 +395,7 @@ import CalculatorInputs from '@/models/calculator-inputs';
 import {FormWizard, TabContent } from 'vue-form-wizard';
 import 'vue-form-wizard/dist/vue-form-wizard.min.css';
 import CustomWizardStep from '@/components/CustomWizardStep.vue';
+import * as vanal from 'vue-analytics';
 
 @Component({
   components: {
@@ -470,6 +408,8 @@ export default class Calculator extends Vue {
   public $refs!: Vue['$refs'] & {
     formWizard: { reset: () => void, $el: Element}
   };
+
+  public $ga: any;
 
   public formKey: number = Date.now();
   public landingPage: boolean = true;
@@ -538,35 +478,31 @@ export default class Calculator extends Vue {
     return [
       {
         text: 'Blowout Savings',
-        value: this.form.blowoutSavings.toFixed(2)
+        value: this.form.blowoutSavings.toFixed(0)
       },
       {
         text: 'Tyre Wear Savings',
-        value: this.form.wearSavings.toFixed(2)
+        value: this.form.wearSavings.toFixed(0)
       },
       {
         text: 'Fuel Savings',
-        value: this.form.fuelSavings.toFixed(2)
+        value: this.form.fuelSavings.toFixed(0)
       },
       {
         text: 'Service Call Savings',
-        value: this.form.serviceSavings.toFixed(2)
+        value: this.form.serviceSavings.toFixed(0)
       },
       {
         text: 'Extended Season Additional Returns',
-        value: this.form.additionalReturns.toFixed(2)
+        value: this.form.additionalReturns.toFixed(0)
       },
       {
         text: 'Tyre Maintenance Savings',
-        value: this.form.maintainanceSavings.toFixed(2)
-      },
-      {
-        text: 'HPMV Tyre Infringement Savings',
-        value: this.form.infingementSavings.toFixed(2)
+        value: this.form.maintainanceSavings.toFixed(0)
       },
       {
         text: 'CTI Annual Maintenance Costs',
-        value: this.form.maintainanceCosts.toFixed(2)
+        value: this.form.maintainanceCosts.toFixed(0)
       }
     ];
   }
@@ -600,11 +536,36 @@ export default class Calculator extends Vue {
     this.landingPage = true;
   }
 
-  public wizardPageChanged() {
+  public wizardPageChanged(prevIndex: number, nextIndex: number) {
     window.scrollTo({
       top: 500,
       behavior: 'smooth'
     });
+
+    let eventLabel = '';
+    switch (nextIndex) {
+      case 0:
+        eventLabel = 'Step1_Road';
+        break;
+      case 1:
+        eventLabel = 'Step2_Fuel';
+        break;
+      case 2:
+        eventLabel = 'Step3_Vehicle';
+        break;
+      case 3:
+        eventLabel = 'Step4_Cost_Benefits';
+        break;
+      case 4:
+        eventLabel = 'Step5_Results';
+        break;
+      case 5:
+        eventLabel = 'Step5_Results';
+        break;
+    }
+    if (eventLabel !== '') {
+      this.$ga.event('Calculator_Lead', 'Click', eventLabel);
+    }
   }
 
   public nextInput(event: KeyboardEvent) {
@@ -631,6 +592,11 @@ export default class Calculator extends Vue {
     }
   }
 
+  public startButtonClick() {
+    this.$ga.event('Calculator_Lead', 'Click', 'Step1_Road');
+    this.landingPage = false;
+  }
+
   public prevPage(props: {prevTab: () => void, activeTabIndex: number}) {
     if (props.activeTabIndex === 0) {
       this.landingPage = true;
@@ -639,8 +605,16 @@ export default class Calculator extends Vue {
     }
   }
 
-  public nextPage(props: {nextTab: () => void}) {
+  public nextPage(props: {nextTab: () => void, activeTabIndex: number}) {
     props.nextTab();
+  }
+
+  public requestQuote() {
+    this.$ga.event('Calculator_Lead', 'Click', 'Requested_Quote');
+  }
+
+  public mounted() {
+    this.$ga.event('Calculator_Lead', 'Click', 'Entry');
   }
 
   public showResults(props: {nextTab: () => void}) {
@@ -764,6 +738,14 @@ hr {
     border-radius: 8px;
     color: black;
   }
+}
+.vue-form-wizard .requestQuote button {
+  color: rgb(255, 193, 19);
+  border: 2px solid rgb(255, 193, 19);
+  border-radius: 5px;
+  font-family: "Alfa Slab One", cursive;
+  font-weight: 100;
+  font-size: 22px;
 }
 .bd-name {
   white-space: pre;
