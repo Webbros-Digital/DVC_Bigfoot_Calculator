@@ -153,6 +153,121 @@ export default class CalculatorInputs {
       return periods.First().points;
     }
 
-    return ppEnumerable.First().points;
+    return ppEnumerable.Last().points;
+  }
+
+  /*
+    Validation
+  */
+  public get distanceValidation(): { valid: boolean, minimum: number } {
+    return {
+      valid: (this.distance !== 0 && this.distance && this.distance >= 50000) as boolean,
+      minimum: 50000
+    };
+  }
+  public get ctiReqPctValidation(): { valid: boolean, minimum: number, maximum: number } {
+    return {
+      valid: (this.ctiReqPct !== 0 && this.ctiReqPct && this.ctiReqPct >= 10 && this.ctiReqPct <= 100) as boolean,
+      minimum: 10,
+      maximum: 100
+    };
+  }
+  public get fuelCostValidation(): { valid: boolean, minimum: number, maximum: number } {
+    return {
+      valid: (this.fuelCost !== 0 && this.fuelCost && this.fuelCost >= 1 && this.fuelCost <= 3) as boolean,
+      minimum: 1,
+      maximum: 3
+    };
+  }
+  public get fuelConsumptionValidation(): { valid: boolean, minimum: number, maximum: number } {
+    const calcFuelConsumption = this.getFuelConsumption;
+    return {
+      valid: (calcFuelConsumption && calcFuelConsumption >= 0.85 && calcFuelConsumption <= 2.70) as boolean,
+      minimum: 0.85,
+      maximum: 2.70
+    };
+  }
+  public get axelsValidation(): { valid: boolean, minimum: number } {
+    return {
+      valid: (this.axels !== 0 && this.axels && this.axels >= 1) as boolean,
+      minimum: 1
+    };
+  }
+  public get tyresValidation(): { valid: boolean, minimum: number } {
+    return {
+      valid: (this.tyres !== 0 && this.tyres && this.tyres >= 2) as boolean,
+      minimum: 2
+    };
+  }
+  public get costPerTyreValidation(): { valid: boolean, minimum: number } {
+    return {
+      valid: (this.costPerTyre !== 0 && this.costPerTyre && this.costPerTyre >= 200) as boolean,
+      minimum: 200
+    };
+  }
+  public get tyreWearPctValidation(): { valid: boolean, minimum: number, maximum: number } {
+    return {
+      valid: (
+        this.tyreWearPct !== 0 && this.tyreWearPct && this.tyreWearPct >= 10 && this.tyreWearPct <= 100
+      ) as boolean,
+      minimum: 10,
+      maximum: 100
+    };
+  }
+  public get blowoutsValidation(): { valid: boolean, minimum: number } {
+    return {
+      valid: (
+        this.blowouts === 0 || (this.blowouts && this.blowouts >= 0)
+      ) as boolean,
+      minimum: 0
+    };
+  }
+  public get serviceCallsValidation(): { valid: boolean, minimum: number } {
+    return {
+      valid: (
+        this.serviceCalls !== 0 && this.serviceCalls && this.serviceCalls >= 1
+      ) as boolean,
+      minimum: 1
+    };
+  }
+  public get serviceCalloutValidation(): { valid: boolean, minimum: number } {
+    return {
+      valid: (
+        this.serviceCallout === 0 || (this.serviceCallout && this.serviceCallout >= 0)
+      ) as boolean,
+      minimum: 0
+    };
+  }
+  public get maintainanceChecksValidation(): { valid: boolean, minimum: number } {
+    return {
+      valid: (
+        this.maintainanceChecks === 0 || (this.maintainanceChecks && this.maintainanceChecks >= 0)
+      ) as boolean,
+      minimum: 0
+    };
+  }
+  public get ctiEquipmentMaintainancePctValidation(): { valid: boolean, minimum: number, maximum: number } {
+    return {
+      valid: (
+        this.ctiEquipmentMaintainancePct === 0 || (
+          this.ctiEquipmentMaintainancePct &&
+          this.ctiEquipmentMaintainancePct <= 10 &&
+          this.ctiEquipmentMaintainancePct >= 0
+        )
+      ) as boolean,
+      minimum: 0,
+      maximum: 10
+    };
+  }
+  public get extendedOperatingSeasonValidation(): { valid: boolean, minimum: number, maximum: number } {
+    return {
+      valid: (
+        this.extendedOperatingSeason === 0 || (
+          this.extendedOperatingSeason && this.extendedOperatingSeason >= 0 && this.extendedOperatingSeason <= 365
+        )
+      ) as boolean,
+      minimum: 0,
+      maximum: 365
+    };
   }
 }

@@ -68,261 +68,298 @@
             :index="props.index">
           </wizard-step>
         </template>
-        <tab-content title="Road" icon='fas fa-road' class='pt-2 pt-md-4'>
+        <tab-content title="Road" icon='fas fa-road' class='pt-2 pt-md-4'
+            :before-change="validateAsync">
           <h2>1. Road</h2>
-          <b-form-group
-            label-cols-sm="6"
-            label-cols-lg="8"
-            label="Annual Distance Travelled"
-            label-for="distance">
-            <b-input-group append='km'>
-              <b-form-input
-                id="distance"
-                type='number'
-                min='10000'
-                step='10000'
-                v-model.number="form.distance">
+          <b-form ref='roadForm'>
+            <b-form-group
+              label-cols-sm="6"
+              label-cols-lg="8"
+              label="Annual Distance Travelled"
+              label-for="distance"
+              :state="form.distanceValidation.valid"
+              :invalid-feedback="`Please enter a distance greater than ${form.distanceValidation.minimum}`">
+              <b-input-group append='km'>
+                <b-form-input
+                  id="distance"
+                  type='number'
+                  :min='form.distanceValidation.minimum'
+                  step='1'
+                  required
+                  v-model.number="form.distance">
+                </b-form-input>
+              </b-input-group>
+            </b-form-group>
+            <b-form-group
+              label-cols-sm="6"
+              label-cols-lg="8"
+              label="Road Conditions (Moderate terrain, Good Surface =1, Challenging Terrain and Surface = 5)"
+              label-for="roadConditions"
+              type='number'>
+              <b-form-input id="roadConditions" type='range' min='1' max='5'
+                required
+                v-model.number="form.roadConditions">
               </b-form-input>
-            </b-input-group>
-          </b-form-group>
-          <b-form-group
-            label-cols-sm="6"
-            label-cols-lg="8"
-            label="Road Conditions (Moderate terrain, Good Surface =1, Challenging Terrain and Surface = 5)"
-            label-for="roadConditions"
-            type='number'>
-            <b-form-input id="roadConditions" type='range' min='1' max='5'
-              v-model.number="form.roadConditions">
-            </b-form-input>
-            <div class='d-flex justify-content-between'>
-              <div>1</div>
-              <div>2</div>
-              <div>3</div>
-              <div>4</div>
-              <div>5</div>
-            </div>
-          </b-form-group>
-          <b-form-group
-            label-cols-sm="6"
-            label-cols-lg="8"
-            label="Percentage where CTI is required (the Bigfoot advantage)"
-            label-for="ctiReqPct">
-            <b-input-group append='%'>
-              <b-form-input
-                id="ctiReqPct"
-                type='number'
-                min='0'
-                max='100'
-                v-model.number="form.ctiReqPct"
-                v-on:keyup.enter="$refs.formWizard.nextTab()">
-              </b-form-input>
-            </b-input-group>
-          </b-form-group>
+              <div class='d-flex justify-content-between'>
+                <div>1</div>
+                <div>2</div>
+                <div>3</div>
+                <div>4</div>
+                <div>5</div>
+              </div>
+            </b-form-group>
+            <b-form-group
+              label-cols-sm="6"
+              label-cols-lg="8"
+              label="Percentage where CTI is required (the Bigfoot advantage)"
+              label-for="ctiReqPct"
+              :state="form.ctiReqPctValidation.valid"
+              :invalid-feedback="`Please enter a percentage greater than ${form.ctiReqPctValidation.minimum} and less than ${form.ctiReqPctValidation.maximum}`">
+              <b-input-group append='%'>
+                <b-form-input
+                  id="ctiReqPct"
+                  type='number'
+                  :min='form.ctiReqPctValidation.minimum'
+                  max='100'
+                  required
+                  v-model.number="form.ctiReqPct"
+                  v-on:keyup.enter="nextPage()">
+                </b-form-input>
+              </b-input-group>
+            </b-form-group>
+          </b-form>
         </tab-content>
-        <tab-content title="Fuel" icon='fas fa-gas-pump' class='pt-2 pt-md-4'>
-          <h2>2. Fuel</h2>
-          <b-form-group
-            label-cols-sm="6"
-            label-cols-lg="8"
-            label="Fuel Cost"
-            label-for="fuelCost">
-            <b-input-group prepend='$' append='/ litre'>
-              <b-form-input
-                id="fuelCost"
-                type='number'
-                min='0.50'
-                max='6.00'
-                step='0.01'
-                v-model.number="form.fuelCost"
-                v-on:keyup.enter="nextInput($event)">
-              </b-form-input>
-            </b-input-group>
-          </b-form-group>
-          <b-form-group
-            label-cols-sm="6"
-            label-cols-lg="8"
-            label="Fuel Consumption (average)"
-            label-for="fuelConsumption">
-            <b-input-group append='km/l'>
-              <b-form-input
-                id="ctiReqPct"
-                type='number'
-                min='0.50'
-                max='2.00'
-                step='0.01'
-                v-model.number="form.fuelConsumption"
-                :placeholder="form.getFuelConsumption + ''">
-              </b-form-input>
-            </b-input-group>
-          </b-form-group>
+        <tab-content title="Fuel" icon='fas fa-gas-pump' class='pt-2 pt-md-4'
+            :before-change="validateAsync">
+          <b-form ref='fuelForm'>
+            <h2>2. Fuel</h2>
+            <b-form-group
+              label-cols-sm="6"
+              label-cols-lg="8"
+              label="Fuel Cost"
+              label-for="fuelCost"
+              :state="form.fuelCostValidation.valid"
+              :invalid-feedback="`Please enter a fuel cost greater than ${form.fuelCostValidation.minimum} and less than ${form.fuelCostValidation.maximum}`">
+              <b-input-group prepend='$' append='/ litre'>
+                <b-form-input
+                  id="fuelCost"
+                  type='number'
+                  :min='form.fuelCostValidation.minimum'
+                  :max='form.fuelCostValidation.maximum'
+                  step='0.01'
+                  v-model.number="form.fuelCost"
+                  v-on:keyup.enter="nextInput($event)">
+                </b-form-input>
+              </b-input-group>
+            </b-form-group>
+            <b-form-group
+              label-cols-sm="6"
+              label-cols-lg="8"
+              label="Fuel Consumption (average)"
+              label-for="fuelConsumption"
+              :state="form.fuelConsumptionValidation.valid"
+              :invalid-feedback="`Please enter a fuel cost greater than ${form.fuelConsumptionValidation.minimum} and less than ${form.fuelConsumptionValidation.maximum}`">
+              <b-input-group append='km/l'>
+                <b-form-input
+                  id="ctiReqPct"
+                  type='number'
+                  :min='form.fuelConsumptionValidation.minimum'
+                  :max='form.fuelConsumptionValidation.maximum'
+                  step='0.01'
+                  v-model.number="form.fuelConsumption"
+                  :placeholder="form.getFuelConsumption + ''"
+                  v-on:keyup.enter="$refs.formWizard.nextTab()">
+                </b-form-input>
+              </b-input-group>
+            </b-form-group>
+          </b-form>
         </tab-content>
-        <tab-content title="Vehicle" icon='fas fa-truck-monster' class='pt-2 pt-md-4'>
-          <h2>3. Vehicle</h2>
-          <b-form-group
-            label-cols-sm="6"
-            label-cols-lg="8"
-            label="Number of axles to be fitted with CTI"
-            label-for="axels">
-            <b-form-input
-              id="axels"
-              type='number'
-              min='1'
-              max='10'
-              step='1'
-              v-model.number="form.axels"
-              v-on:keyup.enter="nextInput($event)">
-            </b-form-input>
-          </b-form-group>
-          <b-form-group
-            label-cols-sm="6"
-            label-cols-lg="8"
-            label="Number of tyres to be fitted with CTI"
-            label-for="tyres">
-            <b-form-input
-              id="tyres"
-              type='number'
-              min='1'
-              max='1000'
-              step='1'
-              v-model.number="form.tyres"
-              v-on:keyup.enter="nextInput($event)">
-            </b-form-input>
-          </b-form-group>
-          <b-form-group
-            label-cols-sm="6"
-            label-cols-lg="8"
-            label="Average cost per tyre"
-            label-for="costPerTyre">
-            <b-input-group prepend='$'>
+        <tab-content title="Vehicle" icon='fas fa-truck-monster' class='pt-2 pt-md-4'
+            :before-change="validateAsync">
+          <b-form ref='vehicleForm'>
+            <h2>3. Vehicle</h2>
+            <b-form-group
+              label-cols-sm="6"
+              label-cols-lg="8"
+              label="Number of axles to be fitted with CTI"
+              label-for="axels"
+              :state="form.axelsValidation.valid"
+              :invalid-feedback="`Number of axels needs to be at least 1`">
               <b-form-input
-                id="costPerTyre"
+                id="axels"
                 type='number'
-                min='0'
-                max='2000'
-                step='0.01'
-                v-model.number="form.costPerTyre"
+                :min='form.axelsValidation.minimum'
+                :step='1'
+                v-model.number="form.axels"
                 v-on:keyup.enter="nextInput($event)">
               </b-form-input>
-            </b-input-group>
-          </b-form-group>
-          <b-form-group
-            label-cols-sm="6"
-            label-cols-lg="8"
-            label="Tyre wear savings when using CTI"
-            label-for="tyreWearPct">
-            <b-input-group append='%'>
+            </b-form-group>
+            <b-form-group
+              label-cols-sm="6"
+              label-cols-lg="8"
+              label="Number of tyres to be fitted with CTI"
+              label-for="tyres"
+              :state="form.tyresValidation.valid"
+              :invalid-feedback="`Number of tyres needs to be at least 2`">
               <b-form-input
-                id="tyreWearPct"
+                id="tyres"
                 type='number'
-                min='0'
-                max='100'
+                :min='form.tyresValidation.minimum'
                 step='1'
-                v-model.number="form.tyreWearPct"
-                v-on:keyup.enter="$refs.formWizard.nextTab()">
+                v-model.number="form.tyres"
+                v-on:keyup.enter="nextInput($event)">
               </b-form-input>
-            </b-input-group>
-          </b-form-group>
+            </b-form-group>
+            <b-form-group
+              label-cols-sm="6"
+              label-cols-lg="8"
+              label="Average cost per tyre"
+              label-for="costPerTyre"
+              :state="form.costPerTyreValidation.valid"
+              :invalid-feedback="`Cost per tyre needs to be at least $${form.costPerTyreValidation.minimum}`">
+              <b-input-group prepend='$'>
+                <b-form-input
+                  id="costPerTyre"
+                  type='number'
+                  :min='form.costPerTyreValidation.minimum'
+                  step='0.01'
+                  v-model.number="form.costPerTyre"
+                  v-on:keyup.enter="nextInput($event)">
+                </b-form-input>
+              </b-input-group>
+            </b-form-group>
+            <b-form-group
+              label-cols-sm="6"
+              label-cols-lg="8"
+              label="Tyre wear savings when using CTI"
+              label-for="tyreWearPct"
+              :state="form.tyreWearPctValidation.valid"
+              :invalid-feedback="`Tyre wear savings needs to be at least $${form.tyreWearPctValidation.minimum}`">
+              <b-input-group append='%'>
+                <b-form-input
+                  id="tyreWearPct"
+                  type='number'
+                  :min='form.tyreWearPctValidation.minimum'
+                  :max='form.tyreWearPctValidation.maximum'
+                  step='1'
+                  v-model.number="form.tyreWearPct"
+                  v-on:keyup.enter="$refs.formWizard.nextTab()">
+                </b-form-input>
+              </b-input-group>
+            </b-form-group>
+          </b-form>
         </tab-content>
-        <tab-content title="Costs & Benefits" icon='fas fa-cogs' class='pt-2 pt-md-4'>
-          <h2>4. Costs & Benefits</h2>
-          <b-form-group
-            label-cols-sm="6"
-            label-cols-lg="8"
-            label="Blowouts per year"
-            label-for="blowouts">
-            <b-form-input
-              id="blowouts"
-              type='number'
-              min='0'
-              max='100'
-              step='0.1'
-              v-model.number="form.blowouts"
-              v-on:keyup.enter="nextInput($event)">
-            </b-form-input>
-          </b-form-group>
-          <b-form-group
-            label-cols-sm="6"
-            label-cols-lg="8"
-            label="Road service calls per year"
-            label-for="serviceCalls">
-            <b-form-input
-              id="serviceCalls"
-              type='number'
-              min='0'
-              max='100'
-              step='0.1'
-              v-model.number="form.serviceCalls"
-              v-on:keyup.enter="nextInput($event)">
-            </b-form-input>
-          </b-form-group>
-          <b-form-group
-            label-cols-sm="6"
-            label-cols-lg="8"
-            label="Road Service Call Out ($ per call out)"
-            label-for="serviceCallout">
-            <b-input-group prepend='$'>
+        <tab-content title="Costs & Benefits" icon='fas fa-cogs' class='pt-2 pt-md-4'
+            :before-change="validateAsync">
+          <b-form ref='candbForm'>
+            <h2>4. Costs & Benefits</h2>
+            <b-form-group
+              label-cols-sm="6"
+              label-cols-lg="8"
+              label="Blowouts per year"
+              label-for="blowouts"
+              :state="form.blowoutsValidation.valid"
+              :invalid-feedback="`Blowouts must be ${form.blowoutsValidation.minimum} or greater`">
               <b-form-input
-                id="serviceCallout"
+                id="blowouts"
                 type='number'
-                min='0'
-                max='2000'
-                step='0.01'
-                v-model.number="form.serviceCallout"
+                :min='form.blowoutsValidation.minimum'
+                step='0.1'
+                v-model.number="form.blowouts"
                 v-on:keyup.enter="nextInput($event)">
               </b-form-input>
-            </b-input-group>
-          </b-form-group>
-          <b-form-group
-            label-cols-sm="6"
-            label-cols-lg="8"
-            label="Tyre Maintenance Checks ($ per month)"
-            label-for="maintainanceChecks">
-            <b-input-group prepend='$'>
+            </b-form-group>
+            <b-form-group
+              label-cols-sm="6"
+              label-cols-lg="8"
+              label="Road service calls per year"
+              label-for="serviceCalls"
+              :state="form.serviceCallsValidation.valid"
+              :invalid-feedback="`Service callouts must be ${form.serviceCallsValidation.minimum} or greater`">
               <b-form-input
-                id="maintainanceChecks"
+                id="serviceCalls"
                 type='number'
-                min='0'
-                max='2000'
-                step='0.01'
-                v-model.number="form.maintainanceChecks"
-                v-on:keyup.enter="$refs.formWizard.nextTab()">
-              </b-form-input>
-            </b-input-group>
-          </b-form-group>
-          <b-form-group
-            label-cols-sm="6"
-            label-cols-lg="8"
-            label="CTI Equipment Maintenance (% of installed cost)"
-            label-for="ctiEquipmentMaintainancePct">
-            <b-input-group append='%'>
-              <b-form-input
-                id="ctiEquipmentMaintainancePct"
-                type='number'
-                min='0'
-                max='100'
-                step='1'
-                v-model.number="form.ctiEquipmentMaintainancePct"
+                :min='form.serviceCallsValidation.minimum'
+                step='0.1'
+                v-model.number="form.serviceCalls"
                 v-on:keyup.enter="nextInput($event)">
               </b-form-input>
-            </b-input-group>
-          </b-form-group>
-          <b-form-group
-            label-cols-sm="6"
-            label-cols-lg="8"
-            label="Extended operating season (days per year)"
-            label-for="extendedOperatingSeason">
-            <b-input-group append='days'>
-              <b-form-input
-                id="extendedOperatingSeason"
-                type='number'
-                min='0'
-                max='365'
-                step='1'
-                v-model.number="form.extendedOperatingSeason"
-                v-on:keyup.enter="nextInput($event)">
-              </b-form-input>
-            </b-input-group>
-          </b-form-group>
+            </b-form-group>
+            <b-form-group
+              label-cols-sm="6"
+              label-cols-lg="8"
+              label="Road Service Call Out ($ per call out)"
+              label-for="serviceCallout"
+              :state="form.serviceCalloutValidation.valid"
+              :invalid-feedback="`Service callout cost must be $${form.serviceCalloutValidation.minimum} or greater`">
+              <b-input-group prepend='$'>
+                <b-form-input
+                  id="serviceCallout"
+                  type='number'
+                  :min='form.serviceCalloutValidation.minimum'
+                  step='0.01'
+                  v-model.number="form.serviceCallout"
+                  v-on:keyup.enter="nextInput($event)">
+                </b-form-input>
+              </b-input-group>
+            </b-form-group>
+            <b-form-group
+              label-cols-sm="6"
+              label-cols-lg="8"
+              label="Tyre Maintenance Checks ($ per month)"
+              label-for="maintainanceChecks"
+              :state="form.maintainanceChecksValidation.valid"
+              :invalid-feedback="`Must be $${form.maintainanceChecksValidation.minimum} or greater`">
+              <b-input-group prepend='$'>
+                <b-form-input
+                  id="maintainanceChecks"
+                  type='number'
+                  :min='form.maintainanceChecksValidation.minimum'
+                  step='0.01'
+                  v-model.number="form.maintainanceChecks"
+                  v-on:keyup.enter="nextInput($event)">
+                </b-form-input>
+              </b-input-group>
+            </b-form-group>
+            <b-form-group
+              label-cols-sm="6"
+              label-cols-lg="8"
+              label="CTI Equipment Maintenance (% of installed cost)"
+              label-for="ctiEquipmentMaintainancePct"
+              :state="form.ctiEquipmentMaintainancePctValidation.valid"
+              :invalid-feedback="`Must be between ${form.ctiEquipmentMaintainancePctValidation.minimum}% and ${form.ctiEquipmentMaintainancePctValidation.maximum}%`">
+              <b-input-group append='%'>
+                <b-form-input
+                  id="ctiEquipmentMaintainancePct"
+                  type='number'
+                  :min='form.ctiEquipmentMaintainancePctValidation.minimum'
+                  :max='form.ctiEquipmentMaintainancePctValidation.maximum'
+                  step='1'
+                  v-model.number="form.ctiEquipmentMaintainancePct"
+                  v-on:keyup.enter="nextInput($event)">
+                </b-form-input>
+              </b-input-group>
+            </b-form-group>
+            <b-form-group
+              label-cols-sm="6"
+              label-cols-lg="8"
+              label="Extended operating season (days per year)"
+              label-for="extendedOperatingSeason"
+              :state="form.extendedOperatingSeasonValidation.valid"
+              :invalid-feedback="`Must be between 0 and 365`">
+              <b-input-group append='days'>
+                <b-form-input
+                  id="extendedOperatingSeason"
+                  type='number'
+                  :min='form.ctiEquipmentMaintainancePctValidation.minimum'
+                  max='365'
+                  step='1'
+                  v-model.number="form.extendedOperatingSeason"
+                  v-on:keyup.enter="nextPage()">
+                </b-form-input>
+              </b-input-group>
+            </b-form-group>
+          </b-form>
         </tab-content>
         <tab-content title="Summary" icon='fas fa-list' class='pt-2 pt-md-4 pb-2 pb-md-4'>
           <h2>Summary</h2>
@@ -406,7 +443,16 @@ import * as vanal from 'vue-analytics';
 })
 export default class Calculator extends Vue {
   public $refs!: Vue['$refs'] & {
-    formWizard: { reset: () => void, $el: Element}
+    formWizard: {
+      reset: () => void,
+      $el: Element,
+      activeTabIndex: number,
+      nextTab: () => void
+    },
+    roadForm: HTMLFormElement,
+    fuelForm: HTMLFormElement,
+    vehicleForm: HTMLFormElement,
+    candbForm: HTMLFormElement
   };
 
   public $ga: any;
@@ -536,6 +582,15 @@ export default class Calculator extends Vue {
     this.landingPage = true;
   }
 
+  public validateAsync() {
+    return new Promise((resolve, reject) => {
+      if (this.validateTabValid(this.$refs.formWizard.activeTabIndex)) {
+        resolve(true);
+      } else {
+        reject('Please fix inputs before progressing');
+      }
+    });
+  }
   public wizardPageChanged(prevIndex: number, nextIndex: number) {
     window.scrollTo({
       top: 500,
@@ -605,8 +660,24 @@ export default class Calculator extends Vue {
     }
   }
 
-  public nextPage(props: {nextTab: () => void, activeTabIndex: number}) {
-    props.nextTab();
+  public nextPage() {
+    this.$refs.formWizard.nextTab();
+  }
+
+  public validateTabValid(tabIndex: number): boolean {
+    switch (tabIndex) {
+      case 0: {
+        return this.$refs.roadForm.checkValidity();
+      }
+      case 1: {
+        return this.$refs.fuelForm.checkValidity();
+      }
+      case 2: {
+        return this.$refs.vehicleForm.checkValidity();
+      }
+    }
+
+    return true;
   }
 
   public requestQuote() {
@@ -615,10 +686,6 @@ export default class Calculator extends Vue {
 
   public mounted() {
     this.$ga.event('Calculator_Lead', 'Click', 'Entry');
-  }
-
-  public showResults(props: {nextTab: () => void}) {
-    props.nextTab();
   }
 
   public get totalBenefitsScore() {
@@ -835,5 +902,14 @@ hr {
 .custom-range::-webkit-slider-thumb {
   background-color: rgb(255, 193, 19) !important;
 }
-
+.form-row .invalid-feedback {
+  color: rgb(255, 193, 19);
+}
+input:required {
+    box-shadow:none;
+}
+input:invalid {
+    box-shadow: none;
+    border: 2px solid rgb(255, 193, 19);
+}
 </style>
