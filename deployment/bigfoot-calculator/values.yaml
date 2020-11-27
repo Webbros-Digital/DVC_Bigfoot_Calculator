@@ -1,4 +1,7 @@
 web_environment: production
-web:
-    tag: "0.01"
-    url: calculator.bigfoot.co.nz
+app:
+  tag: "0.21"
+ingress:
+  url: calculator.bigfoot.co.nz
+traefik:
+  httpsredirect: false

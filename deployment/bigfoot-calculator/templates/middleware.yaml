@@ -1,0 +1,23 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: bigfoot-calculator-web-redirectscheme
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: bigfoot-calculator-web-securityheaders
+spec:
+  headers:
+    customResponseHeaders:
+      server: ""
+      X-Frame-Options: "SAMEORIGIN"
+      X-XSS-Protection: "1; mode=block"
+      X-Content-Type-Options: "nosniff"
+{{ if (eq .Values.traefik.httpsredirect true) }}
+      Strict-Transport-Security: "max-age=31536000; includeSubDomains;"
+{{ end }}

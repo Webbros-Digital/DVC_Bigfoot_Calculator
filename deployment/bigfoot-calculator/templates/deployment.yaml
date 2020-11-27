@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: bigfoot-calculator-web-deployment
@@ -7,6 +7,11 @@ metadata:
     tier: web
     environment: {{ .Values.web_environment }}
 spec:
+  selector:
+    matchLabels:
+      app: bigfoot-calculator
+      tier: web
+      environment: {{ .Values.web_environment }}
   template:
     metadata:
       labels:
@@ -16,7 +21,7 @@ spec:
     spec:
       containers:
         - name: bigfoot-calculator-web
-          image: gcr.io/philo-230001/bigfoot.calculator/web:{{ .Values.web.tag }}
+          image: gcr.io/philo-230001/bigfoot.calculator/web:{{ .Values.app.tag }}
           env:
           - name: "ENVIRONMENT"
             value: {{ .Values.web_environment }}
